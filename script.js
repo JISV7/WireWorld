@@ -151,8 +151,8 @@ function nextGeneration() {
                         if (headCount >= 3) {
                             nextGrid[y][x] = HEAD;
                         }
-                        // Señales moderadas (2 vecinos) tienen 50% de probabilidad
-                        else if (headCount === 2 && Math.random() < 0.5) {
+                        // Señales moderadas (1 vecinos) tienen 50% de probabilidad
+                        else if (headCount === 1 && Math.random() < 0.5) {
                             nextGrid[y][x] = HEAD;
                         }
                     } 
