@@ -14,6 +14,7 @@ let isRunning = false;
 let generation = 0;
 let intervalId = null;
 let speed = 5;
+let randomMode = false;
 
 // Elementos DOM
 const gridElement = document.getElementById('grid');
@@ -116,6 +117,65 @@ function updateStats() {
 
 // Calcular la siguiente generación
 function nextGeneration() {
+    for (let y = 0; y < GRID_HEIGHT; y++) {
+        for (let x = 0; x < GRID_WIDTH; x++) {
+            nextGrid[y][x] = grid[y][x];
+            
+            switch (grid[y][x]) {
+                case EMPTY:
+                    break;
+                case HEAD:
+                    nextGrid[y][x] = TAIL;
+                    break;
+                case TAIL:
+                    nextGrid[y][x] = CONDUCTOR;
+                    break;
+                case CONDUCTOR:
+                    let headCount = 0;
+                    for (let dy = -1; dy <= 1; dy++) {
+                        for (let dx = -1; dx <= 1; dx++) {
+                            if (dx === 0 && dy === 0) continue;
+                            const ny = y + dy;
+                            const nx = x + dx;
+                            if (ny >= 0 && ny < GRID_HEIGHT && nx >= 0 && nx < GRID_WIDTH) {
+                                if (grid[ny][nx] === HEAD) {
+                                    headCount++;
+                                }
+                            }
+                        }
+                    }
+                    
+                    // MODIFICACIÓN PRINCIPAL: Comportamiento aleatorio
+                    if (randomMode) {
+                        // Señales fuertes (3+ vecinos) siempre se propagan
+                        if (headCount >= 3) {
+                            nextGrid[y][x] = HEAD;
+                        }
+                        // Señales moderadas (2 vecinos) tienen 50% de probabilidad
+                        else if (headCount === 2 && Math.random() < 0.5) {
+                            nextGrid[y][x] = HEAD;
+                        }
+                    } 
+                    // Comportamiento original
+                    else {
+                        if (headCount === 1 || headCount === 2) {
+                            nextGrid[y][x] = HEAD;
+                        }
+                    }
+                    break;
+            }
+        }
+    }
+    
+    const temp = grid;
+    grid = nextGrid;
+    nextGrid = temp;
+    
+    generation++;
+    renderGrid();
+    updateStats();
+}
+function nextGeneration() {
     // Crear una copia de la cuadrícula actual para cálculos
     for (let y = 0; y < GRID_HEIGHT; y++) {
         for (let x = 0; x < GRID_WIDTH; x++) {
@@ -154,6 +214,19 @@ function nextGeneration() {
                         }
                     }
                     
+                    // Comportamiento aleatorio
+                    if (randomMode) {
+                        // Señales fuertes (3+ vecinos) siempre se propagan
+                        if (headCount >= 3) {
+                            nextGrid[y][x] = HEAD;
+                        }
+                        // Señales moderadas (2 vecinos) tienen 50% de probabilidad
+                        else if (headCount === 2 && Math.random() < 0.5) {
+                            nextGrid[y][x] = HEAD;
+                        }
+                    }                            
+                    
+                    // Comportamiento original
                     if (headCount === 1 || headCount === 2) {
                         nextGrid[y][x] = HEAD;
                     }
@@ -170,6 +243,51 @@ function nextGeneration() {
     generation++;
     renderGrid();
     updateStats();
+}
+
+// Cambiar entre modos
+function toggleRandomMode() {
+    randomMode = !randomMode;
+    const modeLabel = document.getElementById('mode-label');
+    modeLabel.textContent = randomMode ? 'Modo Divertido' : 'Modo Clásico';
+    
+    // Actualizar descripción del algoritmo
+    updateAlgorithmDescription();
+}
+
+// Actualizar descripción reglas del algoritmo
+function updateAlgorithmDescription() {
+    const algorithmElement = document.querySelector('.algorithm');
+    if (!algorithmElement) return;
+
+    if (randomMode) {
+        algorithmElement.innerHTML = `
+            <p><strong>Modo Divertido Activado:</strong> Comportamiento modificado con propagación probabilística</p>
+            <ol>
+                <li><strong>Células vacías (0)</strong> permanecen vacías.</li>
+                <li><strong>Cabezas de electrón (1)</strong> se convierten en colas de electrón.</li>
+                <li><strong>Colas de electrón (2)</strong> se convierten en conductores.</li>
+                <li><strong>Conductores (3)</strong> se convierten en cabezas de electrón si:
+                    <ul>
+                        <li>Tienen 3+ vecinos cabezas (100% probabilidad)</li>
+                        <li>Tienen exactamente 2 vecinos cabezas (50% probabilidad)</li>
+                    </ul>
+                </li>
+            </ol>
+        `;
+    } else {
+        algorithmElement.innerHTML = `
+            <p>WireWorld es un autómata celular que simula circuitos electrónicos. Cada célula puede estar en uno de cuatro estados:</p>
+            <div class="example">...</div>
+            <p>La simulación progresa en generaciones discretas con estas reglas:</p>
+            <ol>
+                <li><strong>Células vacías (0)</strong> permanecen vacías.</li>
+                <li><strong>Cabezas de electrón (1)</strong> se convierten en colas de electrón.</li>
+                <li><strong>Colas de electrón (2)</strong> se convierten en conductores.</li>
+                <li><strong>Conductores (3)</strong> se convierten en cabezas de electrón solo si exactamente 1 o 2 de sus 8 vecinos son cabezas de electrón.</li>
+            </ol>
+        `;
+    }
 }
 
 // Iniciar la simulación
@@ -401,5 +519,6 @@ function importGrid() {
     input.click();
 }
 
+document.getElementById('random-mode-btn').addEventListener('click', toggleRandomMode);
 document.getElementById('import-btn').addEventListener('click', importGrid);
 document.getElementById('export-btn').addEventListener('click', exportGrid);

@@ -316,3 +316,28 @@ input[type="range"] {
 .import-export button:last-child:hover {
     background: #16a085;
 }
+
+.random-control {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(52, 152, 219, 0.3);
+}
+
+.random-control button {
+    width: 100%;
+    margin-bottom: 10px;
+    background: #9b59b6;
+}
+
+.random-control button:hover {
+    background: #8e44ad;
+}
+
+#mode-label {
+    text-align: center;
+    font-weight: bold;
+    color: #3498db;
+    padding: 8px;
+    background: rgba(30, 40, 60, 0.6);
+    border-radius: 6px;
+}
