@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autómata Celular WireWorld</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Autómata Celular WireWorld</h1>
+        <p class="subtitle">Una simulación de circuitos digitales usando autómatas celulares</p>
+    </header>
+    
+    <div class="container">
+        <div class="panel simulation-panel">
+            <h2>Simulación</h2>
+            <div class="grid-container">
+                <div class="grid" id="grid"></div>
+            </div>
+            <div class="stats">
+                <div>Generación: <span id="generation">0</span></div>
+                <div>Células activas: <span id="active-cells">0</span></div>
+            </div>
+        </div>
+        
+        <div class="panel controls-panel">
+            <h2>Controles</h2>
+            <div class="controls">
+                <button id="start-btn">Iniciar</button>
+                <button id="stop-btn" class="stop">Detener</button>
+                <button id="step-btn">Paso</button>
+                <button id="clear-btn" class="clear">Limpiar</button>
+            </div>
+            
+            <div class="speed-control">
+                <label for="speed">Velocidad: <span id="speed-value">5</span> gen/seg</label>
+                <input type="range" id="speed" min="1" max="20" value="5">
+            </div>
+            
+            <div class="state-selector">
+                <h3>Estado de dibujo</h3>
+                <div class="state-options">
+                    <div class="state-option active" data-state="0">
+                        <div class="state-color" style="background: #1a1a2e;"></div>
+                        <span>Vacío</span>
+                    </div>
+                    <div class="state-option" data-state="1">
+                        <div class="state-color" style="background: #3498db;"></div>
+                        <span>Cabeza</span>
+                    </div>
+                    <div class="state-option" data-state="2">
+                        <div class="state-color" style="background: #e74c3c;"></div>
+                        <span>Cola</span>
+                    </div>
+                    <div class="state-option" data-state="3">
+                        <div class="state-color" style="background: #f1c40f;"></div>
+                        <span>Conductor</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="presets">
+                <h3>Circuitos predefinidos</h3>
+                <div class="preset" id="diode-preset">
+                    <h4>Diodo</h4>
+                    <p>Permite el flujo en una dirección</p>
+                </div>
+                <div class="preset" id="xor-preset">
+                    <h4>Compuerta XOR</h4>
+                    <p>Compuerta OR exclusiva</p>
+                </div>
+                <div class="preset" id="clock-preset">
+                    <h4>Generador de reloj</h4>
+                    <p>Genera pulsos continuos</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="panel info-panel">
+            <h2>Algoritmo WireWorld</h2>
+            <div class="algorithm">
+                <p>WireWorld es un autómata celular que simula circuitos electrónicos. Cada célula puede estar en uno de cuatro estados:</p>
+                
+                <div class="example">
+                    <div class="example-item">
+                        <div class="example-grid">
+                            <div class="cell empty"></div>
+                        </div>
+                        <p>Vacío (0)</p>
+                    </div>
+                    <div class="example-item">
+                        <div class="example-grid">
+                            <div class="cell head"></div>
+                        </div>
+                        <p>Cabeza de electrón (1)</p>
+                    </div>
+                    <div class="example-item">
+                        <div class="example-grid">
+                            <div class="cell tail"></div>
+                        </div>
+                        <p>Cola de electrón (2)</p>
+                    </div>
+                    <div class="example-item">
+                        <div class="example-grid">
+                            <div class="cell conductor"></div>
+                        </div>
+                        <p>Conductor (3)</p>
+                    </div>
+                </div>
+                
+                <p>La simulación progresa en generaciones discretas con estas reglas:</p>
+                
+                <ol>
+                    <li><strong>Células vacías (0)</strong> permanecen vacías.</li>
+                    <li><strong>Cabezas de electrón (1)</strong> se convierten en colas de electrón en la siguiente generación.</li>
+                    <li><strong>Colas de electrón (2)</strong> se convierten en conductores en la siguiente generación.</li>
+                    <li><strong>Conductores (3)</strong> se convierten en cabezas de electrón solo si exactamente 1 o 2 de sus 8 vecinos (vecindad de Moore) son cabezas de electrón. De lo contrario, permanecen conductores.</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
