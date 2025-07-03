@@ -349,3 +349,57 @@ for (let i = 10; i < 30; i++) {
 grid[20][10] = HEAD;
 grid[20][11] = TAIL;
 renderGrid();
+
+// Exportar la cuadrícula a JSON
+function exportGrid() {
+    const data = {
+        grid: grid,
+        generation: generation
+    };
+    const json = JSON.stringify(data);
+    const blob = new Blob([json], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `wireworld_${new Date().toISOString().slice(0,19).replace(/:/g,'-')}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+// Importar la cuadrícula desde JSON
+function importGrid() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = e => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = event => {
+            try {
+                const data = JSON.parse(event.target.result);
+                
+                // Validar estructura de datos
+                if (!data.grid || !Array.isArray(data.grid)) {
+                    throw new Error('Formato de archivo inválido');
+                }
+                
+                stopSimulation();
+                grid = data.grid;
+                generation = data.generation || 0;
+                renderGrid();
+                updateStats();
+            } catch (error) {
+                alert(`Error al importar: ${error.message}`);
+            }
+        };
+        reader.readAsText(file);
+    };
+    input.click();
+}
+
+document.getElementById('import-btn').addEventListener('click', importGrid);
+document.getElementById('export-btn').addEventListener('click', exportGrid);

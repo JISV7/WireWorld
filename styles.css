@@ -292,3 +292,27 @@ input[type="range"] {
         height: 8px;
     }
 }
+
+.import-export {
+    margin-top: 20px;
+    border-top: 1px solid rgba(52, 152, 219, 0.3);
+    padding-top: 20px;
+}
+
+.import-export button {
+    width: 100%;
+    margin-bottom: 10px;
+    background: #9b59b6;
+}
+
+.import-export button:hover {
+    background: #8e44ad;
+}
+
+.import-export button:last-child {
+    background: #1abc9c;
+}
+
+.import-export button:last-child:hover {
+    background: #16a085;
+}
